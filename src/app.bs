@@ -1,0 +1,18 @@
+import express
+import redis
+
+export app
+
+client = redis.createClient()
+
+app = express()
+
+app.get('/fetch', (req, res) ->
+  client.select(2, () ->
+    client.rpop('frigg:queue', (err, result) ->
+      if err
+        throw err
+      res.json({ job: result })
+    )
+  )
+)

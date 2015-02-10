@@ -1,0 +1,12 @@
+{
+  "server": {
+    "source": "src/",
+    "target": "dist/",
+    "node": true
+  },
+  "server-test": {
+    "source": "test/",
+    "target": "dist/test",
+    "node": true
+  }
+}

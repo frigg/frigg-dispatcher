@@ -1,0 +1,44 @@
+import chai: expect
+import supertest as request
+import redis
+
+import ../app
+
+client = redis.createClient()
+
+describe('Express server', () ->
+  describe('/fetch', () ->
+    it('should 200 if there is no job', (done) ->
+      request(app)
+        .get('/fetch')
+        .expect(200)
+        .end((err, res) ->
+          if err
+            return done(err)
+
+          expect(res.body.job).to.equal(null)
+          done()
+        )
+    )
+
+    it('should return job', (done) ->
+      jobObj = {
+        branch: 'master'
+        clone_url: 'url'
+      }
+      client.select(2, () ->
+        client.lpush('frigg:queue', JSON.stringify(jobObj))
+      )
+      request(app)
+        .get('/fetch')
+        .expect(200)
+        .end((err, res) ->
+          if err
+            return done(err)
+
+          expect(res.body.job).to.equal(JSON.stringify(jobObj))
+          done()
+        )
+    )
+  )
+)
