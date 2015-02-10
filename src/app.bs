@@ -12,7 +12,10 @@ app.get('/fetch', (req, res) ->
     client.rpop('frigg:queue', (err, result) ->
       if err
         throw err
-      res.json({ job: JSON.parse(result) })
+        
+      if req.headers['x-frigg-worker-token'] != process.env.FRIGG_WORKER_TOKEN
+        return res.status(403).json({ error: 'Missing token'})
+      return res.json({ job: JSON.parse(result) })
     )
   )
 )

@@ -9,10 +9,9 @@ TEST_FILES = $(shell find test/ -name "*.bs")
 all: node_modules dist
 compile: node_modules dist
 production: clean install compile forever
-test: compile mocha
 
-mocha: dist/test
-	$(ISTANBUL) cover $(MOCHA) dist/test
+test: compile dist/test
+	FRIGG_WORKER_TOKEN=token $(ISTANBUL) cover $(MOCHA) dist/test
 
 dist: $(SRC_FILES)
 	$(BAILEY) -c server

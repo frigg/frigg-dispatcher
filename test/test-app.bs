@@ -6,11 +6,19 @@ import ../app
 
 client = redis.createClient()
 
+
 describe('Express server', () ->
   describe('/fetch', () ->
-    it('should 200 if there is no job', (done) ->
+    it('should return 403 without token', (done) ->
       request(app)
         .get('/fetch')
+        .expect(403, done)
+    )
+
+    it('should return 200 if there is no job', (done) ->
+      request(app)
+        .get('/fetch')
+        .set('x-frigg-worker-token', 'token')
         .expect(200)
         .end((err, res) ->
           if err
@@ -31,6 +39,7 @@ describe('Express server', () ->
       )
       request(app)
         .get('/fetch')
+        .set('x-frigg-worker-token', 'token')
         .expect(200)
         .end((err, res) ->
           if err
