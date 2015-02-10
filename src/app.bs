@@ -12,7 +12,7 @@ app.get('/fetch', (req, res) ->
     client.rpop('frigg:queue', (err, result) ->
       if err
         throw err
-      res.json({ job: result })
+      res.json({ job: JSON.parse(result) })
     )
   )
 )

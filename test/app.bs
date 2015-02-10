@@ -36,7 +36,8 @@ describe('Express server', () ->
           if err
             return done(err)
 
-          expect(res.body.job).to.equal(JSON.stringify(jobObj))
+          expect(res.body.job.branch).to.equal('master')
+          expect(res.body.job.clone_url).to.equal('url')
           done()
         )
     )
