@@ -1,0 +1,2 @@
+# frigg-dispatcher
+Queue API
