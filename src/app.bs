@@ -11,13 +11,14 @@ client = redis.createClient(
 app = express()
 
 app.get('/fetch', (req, res) ->
+  if req.headers['x-frigg-worker-token'] != process.env.FRIGG_WORKER_TOKEN
+    return res.status(403).json({ error: 'Missing token'})
+
   client.select(2, () ->
     client.rpop('frigg:queue', (err, result) ->
       if err
         throw err
 
-      if req.headers['x-frigg-worker-token'] != process.env.FRIGG_WORKER_TOKEN
-        return res.status(403).json({ error: 'Missing token'})
       return res.json({ job: JSON.parse(result) })
     )
   )
