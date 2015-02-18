@@ -8,6 +8,14 @@ client = redis.createClient()
 
 
 describe('Express server', () ->
+  beforeEach((done) ->
+    client.select(2, () ->
+      client.del('frigg:queue', () ->
+        done()
+      )
+    )
+  )
+
   describe('/*', () ->
     it('should redirect to frigg.io', (done) ->
       request(app)
@@ -15,6 +23,7 @@ describe('Express server', () ->
         .expect(302, done)
     )
   )
+
   describe('/fetch', () ->
     it('should return 403 without token', (done) ->
       request(app)
