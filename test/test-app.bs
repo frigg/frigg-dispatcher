@@ -3,12 +3,17 @@ import supertest as request
 import redis
 
 import ../app
+import ../config
 
 client = redis.createClient()
 
 
 describe('Express server', () ->
   beforeEach((done) ->
+    config.FRIGG_WORKER_VERSION = null
+    config.FRIGG_COMMON_VERSION = null
+    config.FRIGG_COVERAGE_VERSION = null
+    
     client.select(2, () ->
       client.del('frigg:queue', () ->
         done()
@@ -37,10 +42,47 @@ describe('Express server', () ->
         .set('x-frigg-worker-token', 'token')
         .expect(200)
         .end((err, res) ->
-          if err
-            return done(err)
-
+          if err then return done(err)
           expect(res.body.job).to.equal(null)
+          done()
+        )
+    )
+
+    it('should deny access from old worker (worker)', (done) ->
+      config.FRIGG_WORKER_VERSION = '1.0.0'
+      request(app)
+        .get('/fetch')
+        .set('x-frigg-worker-token', 'token')
+        .expect(400)
+        .end((err, res) ->
+          if err then return done(err)
+          expect(res.body.error).to.equal('Outdated worker')
+          done()
+        )
+    )
+
+    it('should deny access from old worker (common)', (done) ->
+      config.FRIGG_COMMON_VERSION = '1.0.0'
+      request(app)
+        .get('/fetch')
+        .set('x-frigg-worker-token', 'token')
+        .expect(400)
+        .end((err, res) ->
+          if err then return done(err)
+          expect(res.body.error).to.equal('Outdated worker')
+          done()
+        )
+    )
+
+    it('should deny access from old worker (coverage)', (done) ->
+      config.FRIGG_COVERAGE_VERSION = '1.0.0'
+      request(app)
+        .get('/fetch')
+        .set('x-frigg-worker-token', 'token')
+        .expect(400)
+        .end((err, res) ->
+          if err then return done(err)
+          expect(res.body.error).to.equal('Outdated worker')
           done()
         )
     )
@@ -58,9 +100,7 @@ describe('Express server', () ->
         .set('x-frigg-worker-token', 'token')
         .expect(200)
         .end((err, res) ->
-          if err
-            return done(err)
-
+          if err then return done(err)
           expect(res.body.job.branch).to.equal('master')
           expect(res.body.job.clone_url).to.equal('url')
           done()
