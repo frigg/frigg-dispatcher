@@ -1,23 +1,37 @@
 import express
 import redis
 
+import ./config
+
 export app
 
-client = redis.createClient(
-  process.env.REDIS_PORT or 6379,
-  process.env.REDIS_HOST or '127.0.0.1'
-)
-
+client = redis.createClient(config.REDIS_PORT, config.REDIS_HOST)
 app = express()
 
-app.get('/fetch', (req, res) ->
-  if req.headers['x-frigg-worker-token'] != process.env.FRIGG_WORKER_TOKEN
+app.use('/fetch', (req, res, next) ->
+  if req.headers['x-frigg-worker-token'] != config.FRIGG_WORKER_TOKEN
     return res.status(403).json({ error: 'Missing token'})
 
-  client.select(2, () ->
+  if config.FRIGG_WORKER_VERSION
+    if req.headers['x-frigg-worker-version'] != config.FRIGG_WORKER_VERSION
+      return res.status(400).json({ error: 'Outdated worker'})
+
+  if config.FRIGG_COMMON_VERSION
+    if req.headers['x-frigg-common-version'] != config.FRIGG_COMMON_VERSION
+      return res.status(400).json({ error: 'Outdated worker'})
+
+  if config.FRIGG_COVERAGE_VERSION
+    if req.headers['x-frigg-coverage-version'] != config.FRIGG_COVERAGE_VERSION
+      return res.status(400).json({ error: 'Outdated worker'})
+
+  next()
+)
+
+app.get('/fetch', (req, res) ->
+
+  client.select(config.REDIS_DB, () ->
     client.rpop('frigg:queue', (err, result) ->
-      if err
-        throw err
+      if err then throw err
 
       return res.json({ job: JSON.parse(result) })
     )
