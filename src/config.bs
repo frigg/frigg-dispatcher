@@ -1,7 +1,7 @@
 export {
   REDIS_HOST: process.env.REDIS_HOST or '127.0.0.1'
-  REDIS_PORT: process.env.REDIS_HOST or 6379
-  REDIS_DB: process.env.REDIS_HOST or 2
+  REDIS_PORT: process.env.REDIS_PORT or 6379
+  REDIS_DB: process.env.REDIS_DB or 2
   FRIGG_WORKER_TOKEN: process.env.FRIGG_WORKER_TOKEN
   FRIGG_WORKER_VERSION: process.env.FRIGG_WORKER_VERSION
   FRIGG_COMMON_VERSION: process.env.FRIGG_COMMON_VERSION
