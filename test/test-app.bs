@@ -1,109 +1,121 @@
 import chai: expect
-import supertest as request
+import supertest as supertest
 import redis
+import bluebird
 
 import ../app
 import ../config
 
-client = redis.createClient()
+client = bluebird.promisifyAll(redis.createClient())
+request = bluebird.promisifyAll(supertest)
 
 
 describe('Express server', () ->
-  beforeEach((done) ->
+  beforeEach(() ->
     config.FRIGG_WORKER_VERSION = null
     config.FRIGG_COMMON_VERSION = null
     config.FRIGG_COVERAGE_VERSION = null
-    
-    client.select(2, () ->
-      client.del('frigg:queue', () ->
-        done()
-      )
-    )
+
+    return client
+      .selectAsync(2)
+      .then(() -> client.delAsync('frigg:queue'))
   )
 
   describe('/*', () ->
-    it('should redirect to frigg.io', (done) ->
-      request(app)
+    it('should redirect to frigg.io', () ->
+      return request(app)
         .get('/')
-        .expect(302, done)
+        .expectAsync(302)
     )
   )
 
   describe('/fetch', () ->
-    it('should return 403 without token', (done) ->
-      request(app)
+    it('should return 403 without token', () ->
+      return request(app)
         .get('/fetch')
-        .expect(403, done)
+        .expectAsync(403)
     )
 
-    it('should return 200 if there is no job', (done) ->
-      request(app)
+    it('should return 200 if there is no job', () ->
+      return request(app)
         .get('/fetch')
         .set('x-frigg-worker-token', 'token')
         .expect(200)
-        .end((err, res) ->
-          if err then return done(err)
+        .endAsync()
+        .then((res) ->
           expect(res.body.job).to.equal(null)
-          done()
         )
     )
 
-    it('should deny access from old worker (worker)', (done) ->
+    it('should deny access from old worker (worker)', () ->
       config.FRIGG_WORKER_VERSION = '1.0.0'
-      request(app)
+      return request(app)
         .get('/fetch')
         .set('x-frigg-worker-token', 'token')
         .expect(400)
-        .end((err, res) ->
-          if err then return done(err)
+        .endAsync()
+        .then((res) ->
           expect(res.body.error).to.equal('Outdated worker')
-          done()
         )
     )
 
-    it('should deny access from old worker (common)', (done) ->
+    it('should deny access from old worker (common)', () ->
       config.FRIGG_COMMON_VERSION = '1.0.0'
-      request(app)
+      return request(app)
         .get('/fetch')
         .set('x-frigg-worker-token', 'token')
         .expect(400)
-        .end((err, res) ->
-          if err then return done(err)
+        .endAsync()
+        .then((res) ->
           expect(res.body.error).to.equal('Outdated worker')
-          done()
         )
     )
 
-    it('should deny access from old worker (coverage)', (done) ->
+    it('should deny access from old worker (coverage)', () ->
       config.FRIGG_COVERAGE_VERSION = '1.0.0'
-      request(app)
+      return request(app)
         .get('/fetch')
         .set('x-frigg-worker-token', 'token')
         .expect(400)
-        .end((err, res) ->
-          if err then return done(err)
+        .endAsync()
+        .then((res) ->
           expect(res.body.error).to.equal('Outdated worker')
-          done()
         )
     )
 
-    it('should return job', (done) ->
-      jobObj = {
-        branch: 'master'
-        clone_url: 'url'
-      }
-      client.select(2, () ->
-        client.lpush('frigg:queue', JSON.stringify(jobObj))
-      )
-      request(app)
-        .get('/fetch')
-        .set('x-frigg-worker-token', 'token')
-        .expect(200)
-        .end((err, res) ->
-          if err then return done(err)
+    it('should return job', () ->
+      jobObj = { branch: 'master' clone_url: 'url' }
+      return client
+        .selectAsync(2)
+        .then(() -> client.lpushAsync('frigg:queue', JSON.stringify(jobObj)))
+        .then(() ->
+          return request(app)
+            .get('/fetch')
+            .set('x-frigg-worker-token', 'token')
+            .expect(200)
+            .endAsync()
+        )
+        .then((res) ->
           expect(res.body.job.branch).to.equal('master')
           expect(res.body.job.clone_url).to.equal('url')
-          done()
+        )
+    )
+
+    it('should return job from custom queue', () ->
+      jobObj = { branch: 'master' clone_url: 'url-custom' }
+      return client
+        .selectAsync(2)
+        .then(() -> client.lpushAsync('frigg:queue:custom', JSON.stringify(jobObj)))
+        .then(() ->
+          return request(app)
+            .get('/fetch/custom')
+            .set('x-frigg-worker-token', 'token')
+            .expect(200)
+            .endAsync()
+        )
+        .then((res) ->
+          expect(res.body.job.branch).to.equal('master')
+          expect(res.body.job.clone_url).to.equal('url-custom')
         )
     )
   )

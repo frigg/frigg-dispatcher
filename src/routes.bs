@@ -1,0 +1,12 @@
+import ./controllers
+
+fetch = (req, res, next) ->
+  controllers
+    .fetch(req.params.slug)
+    .then((job) ->
+      return res.json({ job: job })
+    )
+    .catch(next)
+
+redirect = (req, res) ->
+  return res.redirect('http://frigg.io')

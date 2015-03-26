@@ -1,0 +1,14 @@
+import bluebird
+import redis
+
+import ./config
+
+client = bluebird.promisifyAll(redis.createClient(config.REDIS_PORT, config.REDIS_HOST))
+
+fetch = (slug) ->
+  return client
+    .selectAsync(config.REDIS_DB)
+    .then(() ->
+      return client.rpopAsync('frigg:queue' + (slug ? ':#{slug}' : ''))
+    )
+    .then((job) -> JSON.parse(job))

@@ -1,11 +1,10 @@
 import express
-import redis
 
 import ./config
+import ./routes
 
 export app
 
-client = redis.createClient(config.REDIS_PORT, config.REDIS_HOST)
 app = express()
 
 app.use('/fetch', (req, res, next) ->
@@ -27,17 +26,7 @@ app.use('/fetch', (req, res, next) ->
   next()
 )
 
-app.get('/fetch', (req, res) ->
 
-  client.select(config.REDIS_DB, () ->
-    client.rpop('frigg:queue', (err, result) ->
-      if err then throw err
-
-      return res.json({ job: JSON.parse(result) })
-    )
-  )
-)
-
-app.get('/*', (req, res) ->
-  return res.redirect('http://frigg.io')
-)
+app.get('/fetch/:slug', routes.fetch)
+app.get('/fetch', routes.fetch)
+app.get('/*', routes.redirect)
