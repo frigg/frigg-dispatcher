@@ -2,6 +2,9 @@ tasks:
   - npm install
   - make test
   - make cobertura
+ 
+services:
+  - redis-server
 
 coverage:
   path: coverage/cobertura-coverage.xml
