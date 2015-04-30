@@ -13,6 +13,9 @@ production: clean install compile forever
 test: compile dist/test
 	FRIGG_WORKER_TOKEN=token $(ISTANBUL) cover $(MOCHA) dist/test
 
+mocha: compile dist/test
+	FRIGG_WORKER_TOKEN=token $(BIN)/mocha dist/test
+
 dist: $(SRC_FILES)
 	$(BAILEY) -c server
 
