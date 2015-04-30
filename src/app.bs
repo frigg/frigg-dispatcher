@@ -31,4 +31,5 @@ app.use('/fetch', (req, res, next) ->
 
 app.get('/fetch/:slug', routes.fetch)
 app.get('/fetch', routes.fetch)
+app.post('/webhooks/github', routes.webhooks.github)
 app.get('/*', routes.redirect)

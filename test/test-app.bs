@@ -18,7 +18,11 @@ describe('Express server', () ->
 
     return client
       .selectAsync(2)
-      .then(() -> client.delAsync('frigg:queue'))
+      .then(() -> bluebird.all([
+        client.delAsync('frigg:queue'),
+        client.delAsync('frigg:queue:custom'),
+        client.delAsync('frigg:webhooks'),
+      ]))
   )
 
   describe('/*', () ->
@@ -116,6 +120,38 @@ describe('Express server', () ->
         .then((res) ->
           expect(res.body.job.branch).to.equal('master')
           expect(res.body.job.clone_url).to.equal('url-custom')
+        )
+    )
+  )
+
+  describe('/webhooks/github', () ->
+    it('should return 202', () ->
+      return request(app)
+        .post('/webhooks/github')
+        .expectAsync(202)
+    )
+
+    it('should put payload on redis queue', () ->
+      payload = {'ref': 'refs/heads/master' 'after': 'ba6854eb994c433b48a3be20fc04cae93d6929a6'}
+
+      return request(app)
+        .post('/webhooks/github')
+        .set('X-Github-Event', 'push')
+        .send(payload)
+        .expect(202)
+        .endAsync()
+        .then((res) ->
+          return client.selectAsync(2)
+        )
+        .then(() ->
+          return client.lrangeAsync('frigg:webhooks', 0, -1)
+        )
+        .then((queue) ->
+          expect(queue.length).to.equal(1)
+          item = JSON.parse(queue[0])
+          expect(item.service).to.equal('github')
+          expect(item.type).to.equal('push')
+          expect(item.payload).to.eql(payload)
         )
     )
   )
