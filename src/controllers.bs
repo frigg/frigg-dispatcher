@@ -12,3 +12,14 @@ fetch = (slug) ->
       return client.rpopAsync('frigg:queue' + (slug ? ':#{slug}' : ''))
     )
     .then((job) -> JSON.parse(job))
+
+handleWebhook = (service, type, payload) ->
+  return client
+    .selectAsync(config.REDIS_DB)
+    .then(() ->
+        return client.lpushAsync('frigg:webhooks', JSON.stringify({
+          service: service
+          type: type
+          payload: payload
+        }))
+    )

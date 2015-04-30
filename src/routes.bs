@@ -10,3 +10,16 @@ fetch = (req, res, next) ->
 
 redirect = (req, res) ->
   return res.redirect('http://frigg.io')
+
+webhooks = {
+  github: (req, res, next) ->
+    event = req.headers['x-github-event']
+    return controllers
+      .handleWebhook('github', event, req.body)
+      .then(() ->
+        res.status(202).send(
+          '"#{event}"-event put on queue, it will be handled eventually'
+        )
+      )
+      .catch(next)
+}
