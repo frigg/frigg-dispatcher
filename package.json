@@ -21,6 +21,7 @@
     "bluebird": "^2.9.15",
     "body-parser": "^1.12.3",
     "express": "^4.11.2",
+    "raven": "^0.7.3",
     "redis": "^0.12.1"
   },
   "devDependencies": {

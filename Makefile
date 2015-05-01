@@ -18,6 +18,7 @@ mocha: compile dist/test
 
 dist: $(SRC_FILES)
 	$(BAILEY) -c server
+	sed -i '' 's/\/\/ istanbul ignore next/\/\* istanbul ignore next \*\//' dist/*.js
 
 dist/test: $(TEST_FILES)
 	$(BAILEY) -c server-test

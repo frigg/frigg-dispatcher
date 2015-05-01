@@ -33,3 +33,9 @@ app.get('/fetch/:slug', routes.fetch)
 app.get('/fetch', routes.fetch)
 app.post('/webhooks/github', routes.webhooks.github)
 app.get('/*', routes.redirect)
+
+
+# istanbul ignore next
+if process.NODE_ENV == 'production'
+  raven = require('raven')
+  app.use(raven.middleware.express(process.env.RAVEN_DSN))
