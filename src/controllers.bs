@@ -1,11 +1,14 @@
 import bluebird
 import redis
+import node-statsd as Statsd
 
 import ./config
 
 client = bluebird.promisifyAll(redis.createClient(config.REDIS_PORT, config.REDIS_HOST))
+statsd = new Statsd({host: config.STATSD_HOST prefix: 'dispatcher'})
 
 fetch = (slug) ->
+  statsd.increment('fetch')
   return client
     .selectAsync(config.REDIS_DB)
     .then(() ->
@@ -14,6 +17,7 @@ fetch = (slug) ->
     .then((job) -> JSON.parse(job))
 
 handleWebhook = (service, type, payload) ->
+  statsd.increment('webhook')
   return client
     .selectAsync(config.REDIS_DB)
     .then(() ->
