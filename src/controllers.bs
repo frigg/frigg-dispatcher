@@ -5,7 +5,7 @@ import node-statsd as Statsd
 import ./config
 
 client = bluebird.promisifyAll(redis.createClient(config.REDIS_PORT, config.REDIS_HOST))
-statsd = new Statsd({host: config.STATSD_HOST prefix: 'dispatcher'})
+statsd = new Statsd({host: config.STATSD_HOST prefix: 'dispatcher.'})
 
 fetch = (slug) ->
   statsd.increment('fetch')
