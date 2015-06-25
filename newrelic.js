@@ -21,6 +21,6 @@ exports.config = {
      * production applications.
      */
     level: 'info',
-    filepath: path.resolve('logs/newrelic.log')
+    filepath: path.resolve(__dirname, 'logs/newrelic.log')
   }
 };
