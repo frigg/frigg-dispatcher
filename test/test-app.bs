@@ -59,7 +59,7 @@ describe('Express server', () ->
         .expect(400)
         .endAsync()
         .then((res) ->
-          expect(res.body).to.contain({code: 'OUTDATED', message: 'The worker is outdated. Please update.'})
+          expect(res.body.error).to.contain({code: 'OUTDATED', message: 'The worker is outdated. Please update.'})
         )
     )
 
@@ -71,7 +71,7 @@ describe('Express server', () ->
         .expect(400)
         .endAsync()
         .then((res) ->
-          expect(res.body).to.contain({code: 'OUTDATED', message: 'The worker is outdated. Please update.'})
+          expect(res.body.error).to.contain({code: 'OUTDATED', message: 'The worker is outdated. Please update.'})
         )
     )
 
@@ -83,7 +83,7 @@ describe('Express server', () ->
         .expect(400)
         .endAsync()
         .then((res) ->
-          expect(res.body).to.contain({code: 'OUTDATED', message: 'The worker is outdated. Please update.'})
+          expect(res.body.error).to.contain({code: 'OUTDATED', message: 'The worker is outdated. Please update.'})
         )
     )
 

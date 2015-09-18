@@ -8,6 +8,8 @@ import ./errors: OutdatedWorkerError
 
 export app
 
+process.env.API_ERROR_WRAPPER = process.env.API_ERROR_WRAPPER or 'error'
+
 app = express()
 app.use(bodyParser.json())
 
