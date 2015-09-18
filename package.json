@@ -21,6 +21,7 @@
     "bluebird": "^2.9.15",
     "body-parser": "^1.12.3",
     "express": "^4.11.2",
+    "express-error-middleware": "^1.2.1",
     "newrelic": "^1.20.2",
     "node-statsd": "^0.1.1",
     "raven": "^0.7.3",

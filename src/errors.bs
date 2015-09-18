@@ -1,0 +1,5 @@
+class OutdatedWorkerError extends Error
+  name: 'OutdatedWorkerError'
+  code: 'OUTDATED'
+  message: 'The worker is outdated. Please update.'
+  status: 400
