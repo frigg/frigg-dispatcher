@@ -1,0 +1,8 @@
+import semver
+
+export {isVersionValid: isVersionValid}
+
+isVersionValid = (version, requirement) ->
+  if not requirement
+    return true
+  return version and semver.satisfies(version, requirement)

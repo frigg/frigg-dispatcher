@@ -51,6 +51,19 @@ describe('Express server', () ->
         )
     )
 
+    it('should allow access from new worker if the requirement allows it', () ->
+      config.FRIGG_WORKER_VERSION = '>=1.0.0'
+      return request(app)
+        .get('/fetch')
+        .set('x-frigg-worker-token', 'token')
+        .set('x-frigg-worker-version', '1.5.0')
+        .expect(200)
+        .endAsync()
+        .then((res) ->
+          expect(res.body.job).to.equal(null)
+        )
+    )
+
     it('should deny access from old worker (worker)', () ->
       config.FRIGG_WORKER_VERSION = '1.0.0'
       return request(app)
