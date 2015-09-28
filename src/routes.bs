@@ -8,6 +8,15 @@ fetch = (req, res, next) ->
     )
     .catch(next)
 
+stats = (req, res, next) ->
+  res.header("Access-Control-Allow-Origin", "*")
+  controllers
+    .stats()
+    .then((stats) ->
+      return res.json({ stats: stats })
+    )
+    .catch(next)
+
 redirect = (req, res) ->
   return res.redirect('http://frigg.io')
 

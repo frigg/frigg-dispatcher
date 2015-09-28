@@ -18,6 +18,11 @@ fetch = (slug, worker_host) ->
     )
     .then((job) -> JSON.parse(job))
 
+stats = () ->
+  return client
+    .selectAsync(config.REDIS_DB)
+    .then(() -> bluebird.props({lastSeen: client.hgetallAsync('frigg:worker:last_seen')}))
+
 handleWebhook = (service, type, payload) ->
   statsd.increment('webhook')
   return client
