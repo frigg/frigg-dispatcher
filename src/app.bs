@@ -13,6 +13,7 @@ process.env.API_ERROR_WRAPPER = process.env.API_ERROR_WRAPPER or 'error'
 
 app = express()
 app.use(bodyParser.json())
+app.set('trust proxy', 'loopback')
 
 app.use('/fetch', (req, res, next) ->
   if req.headers['x-frigg-worker-token'] != config.FRIGG_WORKER_TOKEN
