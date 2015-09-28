@@ -22,4 +22,13 @@ webhooks = {
         )
       )
       .catch(next)
+  general: (req, res, next) ->
+    return controllers
+      .handleWebhook(req.params.slug, null, req.body)
+      .then(() ->
+        res.status(202).send(
+          'event put on "#{req.params.slug}"-queue, it will be handled eventually'
+        )
+      )
+      .catch(next)
 }
