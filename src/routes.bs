@@ -2,7 +2,7 @@ import ./controllers
 
 fetch = (req, res, next) ->
   controllers
-    .fetch(req.params.slug, req.headers['x-frigg-worker-host'])
+    .fetch(req.params.slug, req.headers['x-frigg-worker-host'] or req.ip)
     .then((job) ->
       return res.json({ job: job })
     )
