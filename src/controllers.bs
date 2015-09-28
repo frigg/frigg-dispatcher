@@ -7,10 +7,12 @@ import ./config
 client = bluebird.promisifyAll(redis.createClient(config.REDIS_PORT, config.REDIS_HOST))
 statsd = new Statsd({host: config.STATSD_HOST prefix: 'dispatcher.'})
 
-fetch = (slug) ->
+fetch = (slug, worker_host) ->
   statsd.increment('fetch')
   return client
     .selectAsync(config.REDIS_DB)
+    .then(() -> client.set)
+    .then(() -> client.hsetAsync('frigg:worker:last_seen', worker_host, new Date().toISOString()))
     .then(() ->
       return client.rpopAsync('frigg:queue' + (slug ? ':#{slug}' : ''))
     )
