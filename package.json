@@ -25,7 +25,8 @@
     "newrelic": "^1.20.2",
     "node-statsd": "^0.1.1",
     "raven": "^0.7.3",
-    "redis": "^0.12.1"
+    "redis": "^0.12.1",
+    "semver": "^5.0.3"
   },
   "devDependencies": {
     "chai": "^1.10.0",
