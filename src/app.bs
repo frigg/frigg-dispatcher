@@ -21,7 +21,7 @@ app.use('/fetch', (req, res, next) ->
   if not isVersionValid(req.headers['x-frigg-worker-version'], config.FRIGG_WORKER_VERSION)
     return next(new OutdatedWorkerError())
 
-  if not isVersionValid(req.headers['x-frigg-common-version'], config.FRIGG_COMMON_VERSION)
+  if not isVersionValid(req.headers['x-frigg-settings-version'], config.FRIGG_SETTINGS_VERSION)
     return next(new OutdatedWorkerError())
 
   if not isVersionValid(req.headers['x-frigg-coverage-version'], config.FRIGG_COVERAGE_VERSION)

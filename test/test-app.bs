@@ -13,7 +13,7 @@ request = bluebird.promisifyAll(supertest)
 describe('Express server', () ->
   beforeEach(() ->
     config.FRIGG_WORKER_VERSION = null
-    config.FRIGG_COMMON_VERSION = null
+    config.FRIGG_SETTINGS_VERSION = null
     config.FRIGG_COVERAGE_VERSION = null
 
     return client
@@ -76,8 +76,8 @@ describe('Express server', () ->
         )
     )
 
-    it('should deny access from old worker (common)', () ->
-      config.FRIGG_COMMON_VERSION = '1.0.0'
+    it('should deny access from old worker (settings)', () ->
+      config.FRIGG_SETTINGS_VERSION = '1.0.0'
       return request(app)
         .get('/fetch')
         .set('x-frigg-worker-token', 'token')
