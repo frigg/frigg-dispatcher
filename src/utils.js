@@ -4,5 +4,5 @@ export function isVersionValid(version, requirement) {
   if (!requirement) {
     return true;
   }
-  return version && semver.satisfies(version, requirement);
+  return !!version && semver.satisfies(version, requirement);
 }
