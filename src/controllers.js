@@ -10,14 +10,17 @@ const statsd = new Statsd({
   'prefix': 'dispatcher.',
 });
 
-export function fetch(slug, workerHost) {
+export function fetch(slug, workerHost, versions) {
   statsd.increment('fetch');
   return client.selectAsync(config.REDIS_DB)
     .then(() => {
       return client.set;
     })
     .then(() => {
-      return client.hsetAsync('frigg:worker:last_seen', workerHost, new Date().toISOString());
+      return [
+        client.hsetAsync('frigg:worker:last_seen', workerHost, new Date().toISOString()),
+        client.hsetAsync('frigg:worker:version', workerHost, JSON.stringify(versions)),
+      ];
     })
     .then(() => {
       return client.rpopAsync('frigg:queue' + (slug ? ':' + slug + '' : ''));

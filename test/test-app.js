@@ -28,6 +28,7 @@ describe('Express server', () => {
         client.delAsync('frigg:queue:custom'),
         client.delAsync('frigg:webhooks'),
         client.delAsync('frigg:worker:last_seen'),
+        client.delAsync('frigg:worker:version'),
       ]);
     });
   });
