@@ -1,8 +1,9 @@
 tasks:
   - npm install
-  - make test
-  - make cobertura
- 
+  - npm run lint
+  - npm run coverage
+  - npm run cobertura
+
 services:
   - redis-server
 

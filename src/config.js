@@ -1,0 +1,10 @@
+export default {
+  'REDIS_HOST': process.env.REDIS_HOST || '127.0.0.1',
+  'REDIS_PORT': process.env.REDIS_PORT || 6379,
+  'REDIS_DB': process.env.REDIS_DB || 2,
+  'FRIGG_WORKER_TOKEN': process.env.FRIGG_WORKER_TOKEN,
+  'FRIGG_WORKER_VERSION': process.env.FRIGG_WORKER_VERSION,
+  'FRIGG_SETTINGS_VERSION': process.env.FRIGG_SETTINGS_VERSION,
+  'FRIGG_COVERAGE_VERSION': process.env.FRIGG_COVERAGE_VERSION,
+  'STATSD_HOST': process.env.STATSD_HOST,
+};

@@ -1,0 +1,5 @@
+{
+  "extends": "frigg",
+  "parser": "babel-eslint",
+  "plugins": ["mocha"],
+}

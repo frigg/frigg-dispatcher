@@ -4,7 +4,10 @@
   "description": "Queue API",
   "main": "index.js",
   "scripts": {
-    "test": "make test"
+    "test": "mocha test/ --compilers js:babel/register --recursive",
+    "lint": "eslint .",
+    "coverage": "istanbul cover _mocha test/ -- --compilers js:babel/register --recursive",
+    "cobertura": "istanbul report cobertura"
   },
   "repository": {
     "type": "git",
@@ -29,7 +32,14 @@
     "semver": "^5.0.3"
   },
   "devDependencies": {
+    "babel": "^5.8.23",
+    "babel-eslint": "^4.1.3",
     "chai": "^1.10.0",
+    "eslint": "^1.6.0",
+    "eslint-config-airbnb": "^0.1.0",
+    "eslint-config-frigg": "frigg/eslint-config-frigg",
+    "eslint-plugin-mocha": "^1.0.0",
+    "eslint-plugin-react": "^3.5.1",
     "istanbul": "^0.3.5",
     "mocha": "^2.1.0",
     "supertest": "^0.15.0"

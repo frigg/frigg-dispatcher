@@ -1,4 +1,5 @@
-var path = require('path');
+/* eslint-env node */
+import path from 'path';
 /**
  * New Relic agent configuration.
  *
@@ -21,6 +22,6 @@ exports.config = {
      * production applications.
      */
     level: 'info',
-    filepath: path.resolve(__dirname, 'logs/newrelic.log')
-  }
+    filepath: path.resolve(__dirname, 'logs/newrelic.log'),
+  },
 };
