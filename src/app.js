@@ -1,11 +1,8 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import errorHandler from 'express-error-middleware';
-import config from './config';
 import * as routes from './routes';
-import {InvalidTokenError, OutdatedWorkerError} from './errors';
-import {isVersionValid} from './utils';
-
+import * as middlewares from './middlewares';
 
 process.env.API_ERROR_WRAPPER = process.env.API_ERROR_WRAPPER || 'error';
 
@@ -13,26 +10,9 @@ const app = express();
 app.use(bodyParser.json());
 app.set('trust proxy', 'loopback');
 
-app.use('/fetch', (req, res, next) => {
-  if (req.headers['x-frigg-worker-token'] !== config.FRIGG_WORKER_TOKEN) {
-    return next(new InvalidTokenError());
-  }
-
-  if (!isVersionValid(req.headers['x-frigg-worker-version'], config.FRIGG_WORKER_VERSION)) {
-    return next(new OutdatedWorkerError());
-  }
-
-  if (!isVersionValid(req.headers['x-frigg-settings-version'], config.FRIGG_SETTINGS_VERSION)) {
-    return next(new OutdatedWorkerError());
-  }
-
-  if (!isVersionValid(req.headers['x-frigg-coverage-version'], config.FRIGG_COVERAGE_VERSION)) {
-    return next(new OutdatedWorkerError());
-  }
-
-  next();
-});
-
+app.use('/fetch', middlewares.versions);
+app.use('/fetch', middlewares.requireToken);
+app.use('/fetch', middlewares.requireUpdatedPackages);
 
 app.get('/fetch/:slug', routes.fetch);
 app.get('/fetch', routes.fetch);
