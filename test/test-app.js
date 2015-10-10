@@ -5,7 +5,7 @@ import redis from 'redis';
 import bluebird from 'bluebird';
 
 import app from '../src/app';
-import config from '../src/config';
+import * as config from '../src/config';
 
 const expect = chai.expect;
 
@@ -16,9 +16,11 @@ const request = bluebird.promisifyAll(supertest);
 describe('Express server', () => {
   beforeEach(() => {
     config.FRIGG_WORKER_TOKEN = 'token';
-    config.FRIGG_WORKER_VERSION = null;
-    config.FRIGG_SETTINGS_VERSION = null;
-    config.FRIGG_COVERAGE_VERSION = null;
+    config.VERSIONS = {
+      'frigg-worker': null,
+      'frigg-settings': null,
+      'frigg-coverage': null,
+    };
 
     return client.selectAsync(2).then(() => {
       return bluebird.all([
@@ -26,6 +28,7 @@ describe('Express server', () => {
         client.delAsync('frigg:queue:custom'),
         client.delAsync('frigg:webhooks'),
         client.delAsync('frigg:worker:last_seen'),
+        client.delAsync('frigg:worker:version'),
       ]);
     });
   });
@@ -96,7 +99,7 @@ describe('Express server', () => {
     });
 
     it('should allow access from new worker if the requirement allows it', () => {
-      config.FRIGG_WORKER_VERSION = '>=1.0.0';
+      config.VERSIONS['frigg-worker'] = '>=1.0.0';
       return request(app)
         .get('/fetch')
         .set('x-frigg-worker-token', 'token')
@@ -109,7 +112,7 @@ describe('Express server', () => {
     });
 
     it('should deny access from old worker (worker)', () => {
-      config.FRIGG_WORKER_VERSION = '1.0.0';
+      config.VERSIONS['frigg-worker'] = '1.0.0';
       return request(app)
         .get('/fetch')
         .set('x-frigg-worker-token', 'token')
@@ -123,7 +126,7 @@ describe('Express server', () => {
     });
 
     it('should deny access from old worker (settings)', () => {
-      config.FRIGG_SETTINGS_VERSION = '1.0.0';
+      config.VERSIONS['frigg-settings'] = '1.0.0';
       return request(app)
         .get('/fetch')
         .set('x-frigg-worker-token', 'token')
@@ -137,7 +140,7 @@ describe('Express server', () => {
     });
 
     it('should deny access from old worker (coverage)', () => {
-      config.FRIGG_COVERAGE_VERSION = '1.0.0';
+      config.VERSIONS['frigg-coverage'] = '1.0.0';
       return request(app)
         .get('/fetch')
         .set('x-frigg-worker-token', 'token')

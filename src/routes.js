@@ -1,7 +1,7 @@
 import * as controllers from './controllers';
 
 export function fetch(req, res, next) {
-  controllers.fetch(req.params.slug, req.headers['x-frigg-worker-host'] || req.ip)
+  controllers.fetch(req.params.slug, req.headers['x-frigg-worker-host'] || req.ip, req.versions)
     .then(job => {
       return res.json({
         job: job,
