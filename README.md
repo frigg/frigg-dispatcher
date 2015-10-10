@@ -1,6 +1,6 @@
 # frigg-dispatcher [![Build Status](https://ci.frigg.io/badges/frigg/frigg-dispatcher/)](https://ci.frigg.io/frigg/frigg-dispatcher/last/) [![Coverage Status](https://ci.frigg.io/badges/coverage/frigg/frigg-dispatcher/)](https://ci.frigg.io/frigg/frigg-dispatcher/last/)
 
-Queue API in for frigg.io
+Queue API for frigg.io
 
 ## Usage
 ```
