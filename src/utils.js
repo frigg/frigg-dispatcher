@@ -1,6 +1,6 @@
 import semver from 'semver';
 
-import config from './config';
+import * as config from './config';
 
 export function isVersionValid(version, requirement) {
   if (!requirement) {

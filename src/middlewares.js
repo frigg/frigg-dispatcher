@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import config from './config';
+import * as config from './config';
 import {InvalidTokenError, OutdatedWorkerError} from './errors';
 import {readVersion} from './utils';
 

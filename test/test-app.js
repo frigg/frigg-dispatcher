@@ -5,7 +5,7 @@ import redis from 'redis';
 import bluebird from 'bluebird';
 
 import app from '../src/app';
-import config from '../src/config';
+import * as config from '../src/config';
 
 const expect = chai.expect;
 

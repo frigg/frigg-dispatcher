@@ -1,8 +1,8 @@
-
 import bluebird from 'bluebird';
 import redis from 'redis';
 import Statsd from 'node-statsd';
-const config = require('./config');
+
+import * as config from './config';
 
 const client = bluebird.promisifyAll(redis.createClient(config.REDIS_PORT, config.REDIS_HOST));
 const statsd = new Statsd({
