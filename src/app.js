@@ -3,7 +3,7 @@ import bodyParser from 'body-parser';
 import errorHandler from 'express-error-middleware';
 import config from './config';
 import * as routes from './routes';
-import {OutdatedWorkerError} from './errors';
+import {InvalidTokenError, OutdatedWorkerError} from './errors';
 import {isVersionValid} from './utils';
 
 
@@ -15,9 +15,7 @@ app.set('trust proxy', 'loopback');
 
 app.use('/fetch', (req, res, next) => {
   if (req.headers['x-frigg-worker-token'] !== config.FRIGG_WORKER_TOKEN) {
-    return res.status(403).json({
-      error: 'Missing token',
-    });
+    return next(new InvalidTokenError());
   }
 
   if (!isVersionValid(req.headers['x-frigg-worker-version'], config.FRIGG_WORKER_VERSION)) {
