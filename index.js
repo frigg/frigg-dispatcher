@@ -17,7 +17,9 @@ if (process.env.NODE_ENV === 'production') {
   require('newrelic');
   var exec = Promise.promisify(require('child_process').exec);
   var babel = path.resolve(__dirname, 'node_modules/.bin/babel');
-  appPromise = exec(babel + ' src -d dist')
+  var src = path.resolve(__dirname, 'src');
+  var dist = path.resolve(__dirname, 'dist');
+  appPromise = exec(babel + ' ' + src + ' -d ' + dist)
     .spread(function(stdout, stderr) {
       console.log(createSpacer('stdout'), stdout);
       console.log(createSpacer('stderr'), stderr);
