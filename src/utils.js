@@ -17,3 +17,7 @@ export function readVersion(req, slug) {
   version.isValid = isVersionValid(version.current, version.requirement);
   return version;
 }
+
+export function createQueueKey(slug) {
+  return 'frigg:queue' + (slug ? ':' + slug + '' : '');
+}
