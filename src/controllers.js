@@ -31,6 +31,14 @@ export function fetch(slug, workerHost, versions) {
     });
 }
 
+export function length(slug) {
+  statsd.increment('length');
+  return client.selectAsync(config.REDIS_DB)
+    .then(() => {
+      return client.llenAsync(createQueueKey(slug));
+    });
+}
+
 export function stats() {
   return client.selectAsync(config.REDIS_DB)
     .then(() => {

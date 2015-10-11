@@ -1,11 +1,16 @@
 /* eslint-env mocha */
 import chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 import supertest from 'supertest';
 import redis from 'redis';
 import bluebird from 'bluebird';
 
+import {getBody} from './test-helpers';
+
 import app from '../src/app';
 import * as config from '../src/config';
+
+chai.use(chaiAsPromised);
 
 const expect = chai.expect;
 
@@ -199,9 +204,44 @@ describe('Express server', () => {
     });
   });
 
+  describe('/length/:slug', () => {
+    beforeEach(() => {
+      return client.selectAsync(2)
+        .then(() => {
+          return [
+            client.lpushAsync('frigg:queue', ''),
+            client.lpushAsync('frigg:queue', ''),
+            client.lpushAsync('frigg:queue:custom', ''),
+          ];
+        });
+    });
+
+    it('should return length of frigg:queue with no slug', () => {
+      const response = request(app)
+        .get('/length')
+        .expect(200)
+        .endAsync()
+        .then(getBody);
+
+      return expect(response, 'body').to.eventually.deep.equal({length: 2});
+    });
+
+    it('should return length of frigg:queue:slug with slug', () => {
+      const response = request(app)
+        .get('/length/custom')
+        .expect(200)
+        .endAsync()
+        .then(getBody);
+
+      return expect(response, 'body').to.eventually.deep.equal({length: 1});
+    });
+  });
+
   describe('/webhooks/:slug', () => {
     it('should return 202', () => {
-      return request(app).post('/webhooks/cvs').expectAsync(202);
+      return request(app)
+        .post('/webhooks/cvs')
+        .expectAsync(202);
     });
     it('should put payload on redis queue', () => {
       const payload = {
