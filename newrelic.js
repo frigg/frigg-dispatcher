@@ -7,7 +7,7 @@ var path = require('path');
  * See lib/config.defaults.js in the agent distribution for a more complete
  * description of configuration variables and their potential values.
  */
-let secrets = {};
+var secrets = {};
 if (process.env.SECRETS_PATH) {
   secrets = require(process.env.SECRETS_PATH);
 }
