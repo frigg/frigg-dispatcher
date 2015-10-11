@@ -19,6 +19,12 @@ const request = bluebird.promisifyAll(supertest);
 
 
 describe('Express server', () => {
+  const outdated = {
+    code: 'OUTDATED',
+    error: 'OutdatedWorkerError',
+    message: 'The worker is outdated. Please update.',
+  };
+
   beforeEach(() => {
     config.FRIGG_WORKER_TOKEN = 'token';
     config.VERSIONS = {
@@ -61,13 +67,13 @@ describe('Express server', () => {
     });
 
     it('should return null if there is no job', () => {
-      return request(app)
+      const response = request(app)
         .get('/fetch')
         .set('x-frigg-worker-token', 'token')
         .endAsync()
-        .then(res => {
-          expect(res.body).to.deep.equal({job: null});
-        });
+        .then(getBody);
+
+      return expect(response).to.eventually.deep.equal({job: null});
     });
 
     it('should log last fetch', () => {
@@ -105,58 +111,50 @@ describe('Express server', () => {
 
     it('should allow access from new worker if the requirement allows it', () => {
       config.VERSIONS['frigg-worker'] = '>=1.0.0';
-      return request(app)
+      const response = request(app)
         .get('/fetch')
         .set('x-frigg-worker-token', 'token')
         .set('x-frigg-worker-version', '1.5.0')
         .expect(200)
         .endAsync()
-        .then(res => {
-          expect(res.body.job).to.equal(null);
-        });
+        .then(getBody);
+
+      return expect(response).to.eventually.deep.equal({job: null});
     });
 
     it('should deny access from old worker (worker)', () => {
       config.VERSIONS['frigg-worker'] = '1.0.0';
-      return request(app)
+      const response = request(app)
         .get('/fetch')
         .set('x-frigg-worker-token', 'token')
         .expect(400).endAsync()
-        .then(res => {
-          expect(res.body.error).to.contain({
-            code: 'OUTDATED',
-            message: 'The worker is outdated. Please update.',
-          });
-        });
+        .then(getBody);
+
+      return expect(response).to.eventually.deep.equal({error: outdated});
     });
 
     it('should deny access from old worker (settings)', () => {
       config.VERSIONS['frigg-settings'] = '1.0.0';
-      return request(app)
-        .get('/fetch')
-        .set('x-frigg-worker-token', 'token')
-        .expect(400).endAsync()
-        .then(res => {
-          expect(res.body.error).to.contain({
-            code: 'OUTDATED',
-            message: 'The worker is outdated. Please update.',
-          });
-        });
-    });
-
-    it('should deny access from old worker (coverage)', () => {
-      config.VERSIONS['frigg-coverage'] = '1.0.0';
-      return request(app)
+      const response = request(app)
         .get('/fetch')
         .set('x-frigg-worker-token', 'token')
         .expect(400)
         .endAsync()
-        .then(res => {
-          expect(res.body.error).to.contain({
-            code: 'OUTDATED',
-            message: 'The worker is outdated. Please update.',
-          });
-        });
+        .then(getBody);
+
+      return expect(response).to.eventually.deep.equal({error: outdated});
+    });
+
+    it('should deny access from old worker (coverage)', () => {
+      config.VERSIONS['frigg-coverage'] = '1.0.0';
+      const response = request(app)
+        .get('/fetch')
+        .set('x-frigg-worker-token', 'token')
+        .expect(400)
+        .endAsync()
+        .then(getBody);
+
+      return expect(response).to.eventually.deep.equal({error: outdated});
     });
 
     it('should return job', () => {
@@ -164,7 +162,7 @@ describe('Express server', () => {
         'branch': 'master',
         'clone_url': 'url',
       };
-      return client.selectAsync(2)
+      const response = client.selectAsync(2)
         .then(() => {
           return client.lpushAsync('frigg:queue', JSON.stringify(jobObj));
         })
@@ -175,10 +173,9 @@ describe('Express server', () => {
           .expect(200)
           .endAsync();
         })
-        .then(res => {
-          expect(res.body.job.branch).to.equal('master');
-          expect(res.body.job.clone_url).to.equal('url');
-        });
+        .then(getBody);
+
+      return expect(response).to.eventually.deep.equal({job: jobObj});
     });
 
     it('should return job from custom queue', () => {
@@ -186,7 +183,7 @@ describe('Express server', () => {
         'branch': 'master',
         'clone_url': 'url-custom',
       };
-      return client.selectAsync(2)
+      const response = client.selectAsync(2)
         .then(() => {
           return client.lpushAsync('frigg:queue:custom', JSON.stringify(jobObj));
         })
@@ -197,10 +194,9 @@ describe('Express server', () => {
             .expect(200)
             .endAsync();
         })
-        .then(res => {
-          expect(res.body.job.branch).to.equal('master');
-          expect(res.body.job.clone_url).to.equal('url-custom');
-        });
+        .then(getBody);
+
+      return expect(response).to.eventually.deep.equal({job: jobObj});
     });
   });
 
@@ -223,7 +219,7 @@ describe('Express server', () => {
         .endAsync()
         .then(getBody);
 
-      return expect(response, 'body').to.eventually.deep.equal({length: 2});
+      return expect(response).to.eventually.deep.equal({length: 2});
     });
 
     it('should return length of frigg:queue:slug with slug', () => {
@@ -233,7 +229,7 @@ describe('Express server', () => {
         .endAsync()
         .then(getBody);
 
-      return expect(response, 'body').to.eventually.deep.equal({length: 1});
+      return expect(response).to.eventually.deep.equal({length: 1});
     });
   });
 
