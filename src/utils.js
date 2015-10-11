@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import semver from 'semver';
 
 import * as config from './config';
@@ -20,4 +21,11 @@ export function readVersion(req, slug) {
 
 export function createQueueKey(slug) {
   return 'frigg:queue' + (slug ? ':' + slug + '' : '');
+}
+
+export function loadJsonValues(obj) {
+  _.forOwn(obj, (value, key) => {
+    obj[key] = JSON.parse(value);
+  });
+  return obj;
 }
