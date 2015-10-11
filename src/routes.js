@@ -10,6 +10,16 @@ export function fetch(req, res, next) {
     .catch(next);
 }
 
+export function length(req, res, next) {
+  controllers.length(req.params.slug)
+    .then(result => {
+      return res.json({
+        length: result,
+      });
+    })
+    .catch(next);
+}
+
 export function stats(req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
   controllers.stats()

@@ -16,6 +16,8 @@ app.use('/fetch', middlewares.requireUpdatedPackages);
 
 app.get('/fetch/:slug', routes.fetch);
 app.get('/fetch', routes.fetch);
+app.get('/length/:slug', routes.length);
+app.get('/length', routes.length);
 app.get('/api/stats', routes.stats);
 app.post('/webhooks/github', routes.webhooks.github);
 app.post('/webhooks/:slug', routes.webhooks.general);

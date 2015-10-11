@@ -3,6 +3,7 @@ import redis from 'redis';
 import Statsd from 'node-statsd';
 
 import * as config from './config';
+import {createQueueKey} from './utils';
 
 const client = bluebird.promisifyAll(redis.createClient(config.REDIS_PORT, config.REDIS_HOST));
 const statsd = new Statsd({
@@ -23,10 +24,18 @@ export function fetch(slug, workerHost, versions) {
       ];
     })
     .then(() => {
-      return client.rpopAsync('frigg:queue' + (slug ? ':' + slug + '' : ''));
+      return client.rpopAsync(createQueueKey(slug));
     })
     .then(job => {
       return JSON.parse(job);
+    });
+}
+
+export function length(slug) {
+  statsd.increment('length');
+  return client.selectAsync(config.REDIS_DB)
+    .then(() => {
+      return client.llenAsync(createQueueKey(slug));
     });
 }
 
