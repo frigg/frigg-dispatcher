@@ -33,9 +33,7 @@ appPromise
     var server = app.listen(process.env.PORT || 3000, function listen() {
       console.log(
         '-----------------------------------------------\n',
-        'Express app listening at http://%s:%s',
-        server.address().address,
-        server.address().port
+        'Express app listening at http://localhost:' + server.address().port
       );
     });
   });

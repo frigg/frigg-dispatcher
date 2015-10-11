@@ -2,9 +2,10 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import errorHandler from 'express-error-middleware';
 import * as routes from './routes';
+import * as config from './config';
 import * as middlewares from './middlewares';
 
-process.env.API_ERROR_WRAPPER = process.env.API_ERROR_WRAPPER || 'error';
+process.env.API_ERROR_WRAPPER = 'error';
 
 const app = express();
 app.use(bodyParser.json());
@@ -28,7 +29,7 @@ app.use(errorHandler.ApiErrorsMiddleware);
 // istanbul ignore next
 if (process.NODE_ENV === 'production') {
   const raven = require('raven');
-  app.use(raven.middleware.express(process.env.RAVEN_DSN));
+  app.use(raven.middleware.express(config.RAVEN_DSN));
 }
 
 
