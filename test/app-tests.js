@@ -109,6 +109,23 @@ describe('Express server', () => {
         });
     });
 
+    it('should log versions from last fetch', () => {
+      return request(app)
+        .get('/fetch')
+        .set('x-frigg-worker-token', 'token')
+        .set('x-frigg-worker-host', 'ron')
+        .endAsync()
+        .then(() => {
+          return client.selectAsync(2);
+        })
+        .then(() => {
+          return client.hgetallAsync('frigg:worker:versions');
+        })
+        .then(res => {
+          expect(res).to.contain.key('ron');
+        });
+    });
+
     it('should allow access from new worker if the requirement allows it', () => {
       config.VERSIONS['frigg-worker'] = '>=1.0.0';
       const response = request(app)

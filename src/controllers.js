@@ -3,7 +3,7 @@ import redis from 'redis';
 import Statsd from 'node-statsd';
 
 import * as config from './config';
-import {createQueueKey} from './utils';
+import {createQueueKey, loadJsonValues} from './utils';
 
 const client = bluebird.promisifyAll(redis.createClient(config.REDIS_PORT, config.REDIS_HOST));
 const statsd = new Statsd({
@@ -20,7 +20,7 @@ export function fetch(slug, workerHost, versions) {
     .then(() => {
       return [
         client.hsetAsync('frigg:worker:last_seen', workerHost, new Date().toISOString()),
-        client.hsetAsync('frigg:worker:version', workerHost, JSON.stringify(versions)),
+        client.hsetAsync('frigg:worker:versions', workerHost, JSON.stringify(versions)),
       ];
     })
     .then(() => {
@@ -44,6 +44,7 @@ export function stats() {
     .then(() => {
       return bluebird.props({
         lastSeen: client.hgetallAsync('frigg:worker:last_seen'),
+        versions: client.hgetallAsync('frigg:worker:versions').then(loadJsonValues),
       });
     });
 }
