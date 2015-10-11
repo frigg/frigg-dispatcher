@@ -1,5 +1,6 @@
 /* eslint-env node */
-import path from 'path';
+/* eslint-disable no-var */
+var path = require('path');
 /**
  * New Relic agent configuration.
  *

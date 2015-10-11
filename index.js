@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /* eslint-disable no-console, no-var, vars-on-top, func-names */
 var Promise = require('bluebird');
+var path = require('path');
 var appPromise;
 
 function createSpacer(title) {
@@ -15,7 +16,8 @@ function createSpacer(title) {
 if (process.env.NODE_ENV === 'production') {
   require('newrelic');
   var exec = Promise.promisify(require('child_process').exec);
-  appPromise = exec('babel src -d dist')
+  var babel = path.resolve(__dirname, 'node_modules/.bin/babel');
+  appPromise = exec(babel + ' src -d dist')
     .spread(function(stdout, stderr) {
       console.log(createSpacer('stdout'), stdout);
       console.log(createSpacer('stderr'), stderr);
