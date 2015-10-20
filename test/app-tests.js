@@ -66,6 +66,19 @@ describe('Express server', () => {
       .expectAsync(200);
     });
 
+    it('should return 200 with a token stored in redis', () => {
+      return client.selectAsync(2)
+        .then(() => {
+          return client.lpushAsync('frigg:dispatcher_tokens', 'redis-token');
+        })
+        .then(() => {
+          return request(app)
+          .get('/fetch')
+          .set('x-frigg-worker-token', 'redis-token')
+          .expectAsync(200);
+        });
+    });
+
     it('should return null if there is no job', () => {
       const response = request(app)
         .get('/fetch')
