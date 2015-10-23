@@ -1,7 +1,10 @@
 import _ from 'lodash';
+import redis from 'redis';
 import semver from 'semver';
-
+import bluebird from 'bluebird';
 import * as config from './config';
+
+const client = bluebird.promisifyAll(redis.createClient(config.REDIS_PORT, config.REDIS_HOST));
 
 export function isVersionValid(version, requirement) {
   if (!requirement) {
@@ -28,4 +31,14 @@ export function loadJsonValues(obj) {
     obj[key] = JSON.parse(value);
   });
   return obj;
+}
+
+export function loadTokens() {
+  return client.selectAsync(2)
+    .then(() => {
+      return client.lrangeAsync('frigg:dispatcher_tokens', 0, -1);
+    })
+    .then(tokens => {
+      return _.union(tokens, [config.FRIGG_WORKER_TOKEN]);
+    });
 }

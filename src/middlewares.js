@@ -1,15 +1,17 @@
 import _ from 'lodash';
 
-import * as config from './config';
 import {InvalidTokenError, OutdatedWorkerError} from './errors';
-import {readVersion} from './utils';
+import {readVersion, loadTokens} from './utils';
 
 
 export function requireToken(req, res, next) {
-  if (req.headers['x-frigg-worker-token'] !== config.FRIGG_WORKER_TOKEN) {
-    return next(new InvalidTokenError());
-  }
-  next();
+  loadTokens()
+    .then(tokens => {
+      if (tokens.length > 0 && !_.includes(tokens, req.headers['x-frigg-worker-token'])) {
+        return next(new InvalidTokenError());
+      }
+      next();
+    });
 }
 
 export function requireUpdatedPackages(req, res, next) {
