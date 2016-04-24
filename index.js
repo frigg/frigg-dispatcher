@@ -24,7 +24,7 @@ if (process.env.NODE_ENV === 'production') {
       return require('./dist/app');
     });
 } else {
-  require('babel/register');
+  require('babel-core/register');
   appPromise = Promise.resolve(require('./src/app'));
 }
 

@@ -1,5 +1,5 @@
 {
-  "extends": "frigg",
+  "extends": "airbnb-base",
   "parser": "babel-eslint",
   "plugins": ["mocha"],
 }
