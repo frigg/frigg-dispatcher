@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-/* eslint-disable no-console, no-var, vars-on-top, func-names */
+/* eslint-disable no-console, no-var, vars-on-top, func-names, global-require, prefer-template */
+/* eslint-disable prefer-arrow-callback */
 var Promise = require('bluebird');
 var path = require('path');
 var appPromise;
@@ -18,7 +19,7 @@ if (process.env.NODE_ENV === 'production') {
   var exec = Promise.promisify(require('child_process').exec);
   var babel = path.resolve(__dirname, 'node_modules/.bin/babel');
   appPromise = exec(babel + ' src -d dist')
-    .spread(function(stdout, stderr) {
+    .spread(function (stdout, stderr) {
       console.log(createSpacer('stdout'), stdout);
       console.log(createSpacer('stderr'), stderr);
       return require('./dist/app');
@@ -29,7 +30,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 appPromise
-  .then(function(app) {
+  .then(function (app) {
     var server = app.listen(process.env.PORT || 3000, function listen() {
       console.log(
         '-----------------------------------------------\n',

@@ -1,8 +1,8 @@
 import _ from 'lodash';
 
 import * as config from './config';
-import {InvalidTokenError, OutdatedWorkerError} from './errors';
-import {readVersion} from './utils';
+import { InvalidTokenError, OutdatedWorkerError } from './errors';
+import { readVersion } from './utils';
 
 
 export function requireToken(req, res, next) {

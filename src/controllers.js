@@ -3,7 +3,7 @@ import redis from 'redis';
 import Statsd from 'node-statsd';
 
 import * as config from './config';
-import {createQueueKey, loadJsonValues} from './utils';
+import { createQueueKey, loadJsonValues } from './utils';
 
 const client = bluebird.promisifyAll(redis.createClient(config.REDIS_PORT, config.REDIS_HOST));
 const statsd = new Statsd({

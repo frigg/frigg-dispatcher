@@ -5,7 +5,7 @@ import supertest from 'supertest';
 import redis from 'redis';
 import bluebird from 'bluebird';
 
-import {getBody} from './test-helpers';
+import { getBody } from './test-helpers';
 
 import app from '../src/app';
 import * as config from '../src/config';
@@ -73,7 +73,7 @@ describe('Express server', () => {
         .endAsync()
         .then(getBody);
 
-      return expect(response).to.eventually.deep.equal({job: null});
+      return expect(response).to.eventually.deep.equal({ job: null });
     });
 
     it('should log last fetch', () => {
@@ -136,7 +136,7 @@ describe('Express server', () => {
         .endAsync()
         .then(getBody);
 
-      return expect(response).to.eventually.deep.equal({job: null});
+      return expect(response).to.eventually.deep.equal({ job: null });
     });
 
     it('should deny access from old worker (worker)', () => {
@@ -147,7 +147,7 @@ describe('Express server', () => {
         .expect(400).endAsync()
         .then(getBody);
 
-      return expect(response).to.eventually.deep.equal({error: outdated});
+      return expect(response).to.eventually.deep.equal({ error: outdated });
     });
 
     it('should deny access from old worker (settings)', () => {
@@ -159,7 +159,7 @@ describe('Express server', () => {
         .endAsync()
         .then(getBody);
 
-      return expect(response).to.eventually.deep.equal({error: outdated});
+      return expect(response).to.eventually.deep.equal({ error: outdated });
     });
 
     it('should deny access from old worker (coverage)', () => {
@@ -171,7 +171,7 @@ describe('Express server', () => {
         .endAsync()
         .then(getBody);
 
-      return expect(response).to.eventually.deep.equal({error: outdated});
+      return expect(response).to.eventually.deep.equal({ error: outdated });
     });
 
     it('should return job', () => {
@@ -192,7 +192,7 @@ describe('Express server', () => {
         })
         .then(getBody);
 
-      return expect(response).to.eventually.deep.equal({job: jobObj});
+      return expect(response).to.eventually.deep.equal({ job: jobObj });
     });
 
     it('should return job from custom queue', () => {
@@ -213,7 +213,7 @@ describe('Express server', () => {
         })
         .then(getBody);
 
-      return expect(response).to.eventually.deep.equal({job: jobObj});
+      return expect(response).to.eventually.deep.equal({ job: jobObj });
     });
   });
 
@@ -236,7 +236,7 @@ describe('Express server', () => {
         .endAsync()
         .then(getBody);
 
-      return expect(response).to.eventually.deep.equal({length: 2});
+      return expect(response).to.eventually.deep.equal({ length: 2 });
     });
 
     it('should return length of frigg:queue:slug with slug', () => {
@@ -246,7 +246,7 @@ describe('Express server', () => {
         .endAsync()
         .then(getBody);
 
-      return expect(response).to.eventually.deep.equal({length: 1});
+      return expect(response).to.eventually.deep.equal({ length: 1 });
     });
   });
 
