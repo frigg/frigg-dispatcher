@@ -14,7 +14,7 @@ function createSpacer(title) {
   ].join(' ');
 }
 
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === '-production-') {
   try {
     require('newrelic');
   } catch (error) {
