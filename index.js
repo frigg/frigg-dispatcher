@@ -15,7 +15,12 @@ function createSpacer(title) {
 }
 
 if (process.env.NODE_ENV === 'production') {
-  require('newrelic');
+  try {
+    require('newrelic');
+  } catch (error) {
+    console.log(error);
+  }
+
   var exec = Promise.promisify(require('child_process').exec);
   var babel = path.resolve(__dirname, 'node_modules/.bin/babel');
   appPromise = exec(babel + ' src -d dist')
